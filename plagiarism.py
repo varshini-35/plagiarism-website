@@ -1,5 +1,5 @@
 
-from serpapi import GoogleSearch
+from serpapi.google_search import GoogleSearch
 import requests
 from bs4 import BeautifulSoup
 import re
