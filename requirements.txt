@@ -4,4 +4,3 @@ pytesseract
 beautifulsoup4
 lxml
 requests
-serpapi

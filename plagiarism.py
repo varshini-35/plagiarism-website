@@ -1,5 +1,3 @@
-
-from serpapi.google_search import GoogleSearch
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -10,32 +8,29 @@ STOPWORDS = set("""
 the is and of to in for on with at by from as that this it are was were be been
 """.split())
 
-# ---------- Text Cleaning ----------
+
 def clean_text(text):
     text = text.lower()
     text = re.sub(r'[^a-z\s]', '', text)
-    words = [w for w in text.split() if w not in STOPWORDS]
-    return words
+    return [w for w in text.split() if w not in STOPWORDS]
 
-# ---------- Create n-grams ----------
-def get_ngrams(words, n=2):
-    return set(
-        [" ".join(words[i:i+n]) for i in range(len(words)-n+1)]
-    )
 
-# ---------- Scrape page ----------
+def get_ngrams(words, n=3):
+    return set(" ".join(words[i:i+n]) for i in range(len(words)-n+1))
+
+
 def scrape_text(url):
     try:
         html = requests.get(url, timeout=5).text
-        soup = BeautifulSoup(html, "lxml")
+        soup = BeautifulSoup(html, "html.parser")
         return soup.get_text(separator=" ")
     except:
         return ""
 
-# ---------- MAIN PLAGIARISM FUNCTION ----------
+
 def check_plagiarism_online(text):
 
-    if not text or len(text.strip()) < 20:
+    if len(text.strip()) < 30:
         return 0, "Text too short to check"
 
     words = clean_text(text)
@@ -44,21 +39,20 @@ def check_plagiarism_online(text):
     if not input_ngrams:
         return 0, "No valid content"
 
-    search = GoogleSearch({
+    params = {
+        "engine": "google",
         "q": " ".join(words[:8]),
         "api_key": SERPAPI_KEY,
         "num": 5
-    })
+    }
 
-    results = search.get_dict()
-
-    if "organic_results" not in results:
-        return 0, "No source found"
+    response = requests.get("https://serpapi.com/search", params=params)
+    results = response.json()
 
     best_percent = 0
     best_source = "No source found"
 
-    for result in results["organic_results"]:
+    for result in results.get("organic_results", []):
         url = result.get("link")
         if not url:
             continue
@@ -70,9 +64,7 @@ def check_plagiarism_online(text):
         if not page_ngrams:
             continue
 
-        # Jaccard similarity
-        intersection = input_ngrams.intersection(page_ngrams)
-        similarity = (len(intersection) / len(input_ngrams)) * 100
+        similarity = (len(input_ngrams & page_ngrams) / len(input_ngrams)) * 100
 
         if similarity > best_percent:
             best_percent = similarity
