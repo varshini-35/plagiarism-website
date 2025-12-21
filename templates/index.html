@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Plagiarism Checker</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4, #a18cd1, #4b79a1);
+            background-size: 400% 400%;
+            animation: skyShift 18s ease infinite;
+
+            overflow-x: hidden;
+        }
+
+        @keyframes skyShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .navbar {
+            background: rgba(255,255,255,0.15);
+            padding: 15px 40px;
+            color: white;
+            backdrop-filter: blur(12px);
+            font-size: 22px;
+            font-weight: 600;
+            z-index: 1;
+            position: relative;
+        }
+
+        .container {
+            text-align: center;
+            padding-top: 1px;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 50px;
+            margin-bottom: 10px;
+            color: #fff7ff;
+        }
+
+        p {
+            font-size: 20px;
+            color: #fdfcfe;
+        }
+
+        .card {
+            width: 450px;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            margin: 25px auto;
+            padding: 25px;
+            border-radius: 18px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.3);
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            border-radius: 10px;
+            border: none;
+            background: #f3f3f3;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        input[type="file"] {
+            margin-top: 10px;
+        }
+
+        button {
+            margin-top: 20px;
+            background: #8e44ad;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 10px;
+            border: none;
+            font-size: 19px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #732d91;
+            transform: scale(1.05);
+        }
+
+        /* MODAL */
+        #quoteModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(6px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #quoteModal.hidden {
+            display: none !important;
+        }
+
+        .modal-box {
+            background: rgba(255, 255, 255, 0.92);
+            padding: 35px;
+            text-align: center;
+            border-radius: 15px;
+            width: 450px;
+            box-shadow: 0 6px 30px rgba(0,0,0,0.4);
+            color: #2c2c2c;
+        }
+
+        .modal-box h2 {
+            color: #333;
+            font-weight: 700;
+        }
+
+        .modal-box p {
+            color: #555;
+            font-size: 17px;
+            margin-top: 8px;
+        }
+
+        .close-btn {
+            background: #2575fc;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            background: #125bcc;
+        }
+    </style>
+
+    <script>
+        // ⭐ SHOW POPUP ONLY ONCE PER SESSION
+        window.onload = function () {
+            if (sessionStorage.getItem("popupShown")) {
+                document.getElementById("quoteModal").classList.add("hidden");
+            }
+        };
+
+        function closeModal() {
+            sessionStorage.setItem("popupShown", "true");
+            document.getElementById("quoteModal").classList.add("hidden");
+        }
+    </script>
+</head>
+
+<body>
+
+    <div class="navbar">🔍 Plagiarism Detector</div>
+
+    <!-- POPUP -->
+    <div id="quoteModal">
+        <div class="modal-box">
+            <h2>✨ Welcome ✨</h2>
+            <p><i>“Originality is the essence of true creativity.”</i></p>
+            <p><i>“Verify before you submit — be confident, be original.”</i></p>
+            <button class="close-btn" onclick="closeModal()">Continue</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Plagiarism Checker</h1>
+        <p>Upload an image or enter your text below</p>
+
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+            <div class="card">
+                <h3>Upload Image</h3>
+                <input type="file" name="file">
+            </div>
+
+            <div class="card">
+                <h3>Enter Text</h3>
+                <textarea name="text"></textarea>
+            </div>
+
+            <button type="submit">Check Plagiarism</button>
+        </form>
+    </div>
+
+</body>
+</html>
